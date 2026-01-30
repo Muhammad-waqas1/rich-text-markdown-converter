@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Essential Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Primary Meta Tags -->
+    <title>Rich Text to Markdown Converter - Free Online Tool | Convert HTML to Markdown</title>
+    <meta name="title" content="Rich Text to Markdown Converter - Free Online Tool | Convert HTML to Markdown">
+    <meta name="description"
+        content="Free online rich text to markdown converter. Instantly convert formatted text, HTML, and rich text to clean Markdown syntax. Real-time conversion, copy to clipboard, and download as .md file. No registration required.">
+    <meta name="keywords"
+        content="rich text to markdown, html to markdown, markdown converter, text formatter, markdown generator, convert to markdown, wysiwyg to markdown, markdown editor, free markdown tool, online markdown converter">
+    <meta name="author" content="Rich Text to Markdown Converter">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://muhammad-waqas1.github.io/rich-text-markdown-converter/">
+    <meta property="og:title" content="Rich Text to Markdown Converter - Free Online Tool">
+    <meta property="og:description"
+        content="Instantly convert formatted text and HTML to clean Markdown syntax. Free, fast, and easy to use. Real-time conversion with copy and download features.">
+    <meta property="og:image" content="https://muhammad-waqas1.github.io/rich-text-markdown-converter/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://muhammad-waqas1.github.io/rich-text-markdown-converter/">
+    <meta property="twitter:title" content="Rich Text to Markdown Converter - Free Online Tool">
+    <meta property="twitter:description"
+        content="Instantly convert formatted text and HTML to clean Markdown syntax. Free, fast, and easy to use.">
+    <meta property="twitter:image" content="https://muhammad-waqas1.github.io/rich-text-markdown-converter/og-image.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://muhammad-waqas1.github.io/rich-text-markdown-converter/">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon.svg">
+    <link rel="manifest" href="./manifest.json">
+
+    <!-- Stylesheets -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Schema.org Markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Rich Text to Markdown Converter",
+        "description": "Free online tool to convert rich text and HTML to Markdown format instantly",
+        "url": "https://muhammad-waqas1.github.io/rich-text-markdown-converter/",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Real-time conversion",
+            "Copy to clipboard",
+            "Download as .md file",
+            "Support for headers, lists, links, images",
+            "No registration required"
+        ]
+    }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .editor-container {
+            min-height: 450px;
+            max-height: 650px;
+            overflow-y: auto;
+        }
+
+        #richTextEditor {
+            outline: none;
+            padding: 1.5rem;
+            min-height: 450px;
+            line-height: 1.6;
+        }
+
+        #richTextEditor:empty:before {
+            content: attr(data-placeholder);
+            color: #9ca3af;
+            pointer-events: none;
+        }
+
+        #markdownOutput {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            padding: 1.5rem;
+            min-height: 450px;
+        }
+
+        .toolbar-btn {
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover {
+            background-color: #f3f4f6;
+            transform: translateY(-1px);
+        }
+
+        .toolbar-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-notification {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Custom scrollbar */
+        .editor-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .editor-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .editor-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .editor-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Tooltip */
+        [data-tooltip] {
+            position: relative;
+        }
+
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.5rem 0.75rem;
+            background-color: #1f2937;
+            color: white;
+            font-size: 0.75rem;
+            border-radius: 0.375rem;
+            white-space: nowrap;
+            margin-bottom: 0.5rem;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            transition: all 0.3s ease;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Notification -->
+    <div id="notification"
+        class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden copy-notification z-50">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="notificationText">Copied to clipboard!</span>
+    </div>
+
+    <!-- Hero Header -->
+    <header class="hero-section text-white py-16 pt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 fade-in">
+                <i class="fab fa-markdown mr-3"></i>Rich Text to Markdown Converter
+            </h1>
+            <p class="text-xl md:text-2xl text-white/90 mb-6 fade-in">
+                Convert Formatted Text to Markdown Instantly - Free & Easy
+            </p>
+            <p class="text-lg text-white/80 max-w-3xl mx-auto fade-in">
+                Transform rich text, HTML, and formatted content into clean Markdown syntax in real-time.
+                Perfect for developers, writers, and content creators. No sign-up required.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Converter Section -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+            <!-- Rich Text Editor Panel -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden fade-in">
+                <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-white flex items-center">
+                        <i class="fas fa-edit mr-2"></i>Rich Text Editor
+                    </h2>
+                    <button onclick="clearEditor()"
+                        class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors text-sm font-medium backdrop-blur-sm">
+                        <i class="fas fa-trash-alt mr-2"></i>Clear
+                    </button>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="border-b border-gray-200 bg-gray-50 px-4 py-3 flex flex-wrap gap-2">
+                    <button onclick="formatText('bold')" class="toolbar-btn p-2 rounded hover:bg-gray-200"
+                        data-tooltip="Bold (Ctrl+B)">
+                        <i class="fas fa-bold text-gray-700"></i>
+                    </button>
+                    <button onclick="formatText('italic')" class="toolbar-btn p-2 rounded hover:bg-gray-200"
+                        data-tooltip="Italic (Ctrl+I)">
+                        <i class="fas fa-italic text-gray-700"></i>
+                    </button>
+                    <button onclick="formatText('underline')" class="toolbar-btn p-2 rounded hover:bg-gray-200"
+                        data-tooltip="Underline (Ctrl+U)">
+                        <i class="fas fa-underline text-gray-700"></i>
+                    </button>
+                    <button onclick="formatText('strikeThrough')" class="toolbar-btn p-2 rounded hover:bg-gray-200"
+                        data-tooltip="Strikethrough">
+                        <i class="fas fa-strikethrough text-gray-700"></i>
+                    </button>
+
+                    <div class="w-px bg-gray-300 mx-1"></div>
+
+                    <select onchange="formatHeading(this.value)"
+                        class="toolbar-btn px-3 py-1 rounded border border-gray-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Normal Text</option>
+                        <option value="h1">Heading 1</option>
+                        <option value="h2">Heading 2</option>
+                        <option value="h3">Heading 3</option>
+                        <option value="h4">Heading 4</option>
+                        <option value="h5">Heading 5</option>
+                        <option value="h6">Heading 6</option>
+                    </select>
+
+                    <div class="w-px bg-gray-300 mx-1"></div>
+
+                    <button onclick="formatText('insertUnorderedList')"
+                        class="toolbar-btn p-2 rounded hover:bg-gray-200" data-tooltip="Bullet List">
+                        <i class="fas fa-list-ul text-gray-700"></i>
+                    </button>
+                    <button onclick="formatText('insertOrderedList')" class="toolbar-btn p-2 rounded hover:bg-gray-200"
+                        data-tooltip="Numbered List">
+                        <i class="fas fa-list-ol text-gray-700"></i>
+                    </button>
+
+                    <div class="w-px bg-gray-300 mx-1"></div>
+
+                    <button onclick="insertLink()" class="toolbar-btn p-2 rounded hover:bg-gray-200"
+                        data-tooltip="Insert Link">
+                        <i class="fas fa-link text-gray-700"></i>
+                    </button>
+                    <button onclick="insertImage()" class="toolbar-btn p-2 rounded hover:bg-gray-200"
+                        data-tooltip="Insert Image">
+                        <i class="fas fa-image text-gray-700"></i>
+                    </button>
+                    <button onclick="insertCodeBlock()" class="toolbar-btn p-2 rounded hover:bg-gray-200"
+                        data-tooltip="Code Block">
+                        <i class="fas fa-code text-gray-700"></i>
+                    </button>
+                    <button onclick="insertBlockquote()" class="toolbar-btn p-2 rounded hover:bg-gray-200"
+                        data-tooltip="Blockquote">
+                        <i class="fas fa-quote-right text-gray-700"></i>
+                    </button>
+                    <button onclick="insertHorizontalRule()" class="toolbar-btn p-2 rounded hover:bg-gray-200"
+                        data-tooltip="Horizontal Line">
+                        <i class="fas fa-minus text-gray-700"></i>
+                    </button>
+                </div>
+
+                <!-- Editor Area -->
+                <div class="editor-container bg-white">
+                    <div id="richTextEditor" contenteditable="true"
+                        data-placeholder="Start typing or paste your formatted text here... (Try pasting from Word, ChatGPT, or any rich text source)"
+                        class="focus:outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Markdown Output Panel -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden fade-in">
+                <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4 flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-white flex items-center">
+                        <i class="fab fa-markdown mr-2"></i>Markdown Output
+                    </h2>
+                    <div class="flex gap-2">
+                        <button onclick="copyMarkdown()"
+                            class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors text-sm font-medium backdrop-blur-sm">
+                            <i class="fas fa-copy mr-2"></i>Copy
+                        </button>
+                        <button onclick="downloadMarkdown()"
+                            class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors text-sm font-medium backdrop-blur-sm">
+                            <i class="fas fa-download mr-2"></i>Download
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Output Area -->
+                <div class="editor-container bg-gray-50">
+                    <pre id="markdownOutput" class="text-gray-800"></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- How to Use Section -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-12 fade-in">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+                <i class="fas fa-rocket mr-2 text-purple-600"></i>How to Use
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center feature-card">
+                    <div
+                        class="bg-gradient-to-br from-blue-500 to-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <i class="fas fa-paste text-white text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2 text-lg">1. Paste or Type</h3>
+                    <p class="text-gray-600">Paste formatted text from any source (ChatGPT, Word, Google Docs) or use
+                        the toolbar to format your content</p>
+                </div>
+                <div class="text-center feature-card">
+                    <div
+                        class="bg-gradient-to-br from-green-500 to-green-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <i class="fas fa-magic text-white text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2 text-lg">2. See Instant Results</h3>
+                    <p class="text-gray-600">Watch your markdown output update in real-time as you type or format your
+                        text</p>
+                </div>
+                <div class="text-center feature-card">
+                    <div
+                        class="bg-gradient-to-br from-purple-500 to-purple-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <i class="fas fa-check-circle text-white text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-2 text-lg">3. Copy or Download</h3>
+                    <p class="text-gray-600">Click copy to get markdown to clipboard, or download as .md file for your
+                        projects</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl shadow-lg p-8 mb-12 fade-in">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+                <i class="fas fa-star mr-2 text-yellow-500"></i>Powerful Features
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <i class="fas fa-bolt text-yellow-500 text-2xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Real-Time Conversion</h3>
+                    <p class="text-sm text-gray-600">Instant markdown generation as you type</p>
+                </div>
+                <div class="bg-white rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <i class="fas fa-heading text-blue-500 text-2xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Full Formatting Support</h3>
+                    <p class="text-sm text-gray-600">Headers, lists, links, images, code, and more</p>
+                </div>
+                <div class="bg-white rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <i class="fas fa-mobile-alt text-green-500 text-2xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Mobile Friendly</h3>
+                    <p class="text-sm text-gray-600">Works perfectly on all devices and screen sizes</p>
+                </div>
+                <div class="bg-white rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <i class="fas fa-lock-open text-purple-500 text-2xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">No Registration</h3>
+                    <p class="text-sm text-gray-600">100% free, no sign-up or account needed</p>
+                </div>
+                <div class="bg-white rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <i class="fas fa-shield-alt text-red-500 text-2xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Privacy First</h3>
+                    <p class="text-sm text-gray-600">All processing happens in your browser</p>
+                </div>
+                <div class="bg-white rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <i class="fas fa-download text-indigo-500 text-2xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Export Options</h3>
+                    <p class="text-sm text-gray-600">Copy to clipboard or download as .md file</p>
+                </div>
+                <div class="bg-white rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <i class="fas fa-code text-cyan-500 text-2xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Code Blocks</h3>
+                    <p class="text-sm text-gray-600">Perfect formatting for code snippets</p>
+                </div>
+                <div class="bg-white rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                    <i class="fas fa-table text-orange-500 text-2xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Clean Output</h3>
+                    <p class="text-sm text-gray-600">Professional, standardized markdown syntax</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Markdown Guide Section -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-12 fade-in">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                <i class="fab fa-markdown mr-2 text-blue-600"></i>What is Markdown?
+            </h2>
+            <div class="prose max-w-none">
+                <p class="text-gray-700 mb-4">
+                    Markdown is a lightweight markup language that allows you to format plain text using simple syntax.
+                    It's widely used by developers, technical writers, and content creators for its simplicity and
+                    readability.
+                </p>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-6">Why Use Markdown?</h3>
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-900 mb-2 flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>Easy to Learn
+                        </h4>
+                        <p class="text-gray-600 text-sm">Simple syntax that anyone can master in minutes</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-900 mb-2 flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>Universal Support
+                        </h4>
+                        <p class="text-gray-600 text-sm">Supported by GitHub, Reddit, Stack Overflow, and more</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-900 mb-2 flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>Plain Text
+                        </h4>
+                        <p class="text-gray-600 text-sm">Readable in any text editor, no special software needed</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-900 mb-2 flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>Version Control
+                        </h4>
+                        <p class="text-gray-600 text-sm">Perfect for Git and other version control systems</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-12 fade-in">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+                <i class="fas fa-question-circle mr-2 text-blue-600"></i>Frequently Asked Questions
+            </h2>
+            <div class="space-y-6">
+                <div class="border-b border-gray-200 pb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">How do I convert rich text to markdown?</h3>
+                    <p class="text-gray-700">Simply paste your formatted text into the left editor, or use the
+                        formatting toolbar to create content. The markdown output will appear instantly on the right
+                        side. You can then copy or download the markdown.</p>
+                </div>
+                <div class="border-b border-gray-200 pb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Is this tool completely free?</h3>
+                    <p class="text-gray-700">Yes! This tool is 100% free with no limitations, no registration required,
+                        and no hidden fees. All processing happens in your browser for maximum privacy.</p>
+                </div>
+                <div class="border-b border-gray-200 pb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">What formatting options are supported?</h3>
+                    <p class="text-gray-700">We support all common markdown features: headers (H1-H6), bold, italic,
+                        underline, strikethrough, ordered and unordered lists, links, images, code blocks, blockquotes,
+                        and horizontal rules.</p>
+                </div>
+                <div class="border-b border-gray-200 pb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Can I paste from ChatGPT, Word, or Google Docs?
+                    </h3>
+                    <p class="text-gray-700">Absolutely! Our converter handles formatted text from any source including
+                        ChatGPT, Microsoft Word, Google Docs, Notion, and more. Just paste and watch the magic happen.
+                    </p>
+                </div>
+                <div class="border-b border-gray-200 pb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Is my data safe and private?</h3>
+                    <p class="text-gray-700">Yes! All conversion happens entirely in your browser. Nothing is sent to
+                        any server, and we don't store or collect any of your content. Your data never leaves your
+                        device.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Can I use this for commercial projects?</h3>
+                    <p class="text-gray-700">Yes! Feel free to use this tool for personal or commercial projects. The
+                        generated markdown is yours to use however you like.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Use Cases Section -->
+        <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl shadow-lg p-8 mb-12 fade-in">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+                <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>Perfect For
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <i class="fas fa-code-branch text-purple-600 text-3xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">GitHub README Files</h3>
+                    <p class="text-sm text-gray-600">Create beautiful README.md files for your repositories</p>
+                </div>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <i class="fas fa-book text-blue-600 text-3xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Documentation</h3>
+                    <p class="text-sm text-gray-600">Write technical documentation with clean markdown</p>
+                </div>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <i class="fas fa-blog text-green-600 text-3xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Blog Posts</h3>
+                    <p class="text-sm text-gray-600">Convert articles to markdown for Jekyll, Hugo, or Gatsby</p>
+                </div>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <i class="fas fa-comment-dots text-orange-600 text-3xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Forum Posts</h3>
+                    <p class="text-sm text-gray-600">Format content for Reddit, Stack Overflow, and Discord</p>
+                </div>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <i class="fas fa-file-alt text-red-600 text-3xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Notes & Writing</h3>
+                    <p class="text-sm text-gray-600">Keep your notes in portable, readable markdown format</p>
+                </div>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
+                    <i class="fas fa-robot text-indigo-600 text-3xl mb-3"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">AI Output</h3>
+                    <p class="text-sm text-gray-600">Convert ChatGPT responses to clean markdown</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">About This Tool</h3>
+                    <p class="text-gray-400 text-sm">
+                        A free, open-source rich text to markdown converter. Built with vanilla JavaScript, no external
+                        dependencies. Fast, private, and easy to use.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="https://www.markdownguide.org/" target="_blank" rel="noopener"
+                                class="text-gray-400 hover:text-white transition-colors">Markdown Guide</a></li>
+                        <li><a href="https://github.com" target="_blank" rel="noopener"
+                                class="text-gray-400 hover:text-white transition-colors">GitHub</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Support</h3>
+                    <p class="text-gray-400 text-sm mb-4">
+                        Found a bug or have a feature request? Open an issue on GitHub!
+                    </p>
+                    <a href="https://github.com/muhammad-waqas1/rich-text-markdown-converter" target="_blank"
+                        rel="noopener"
+                        class="inline-flex items-center px-4 py-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium">
+                        <i class="fab fa-github mr-2"></i>View on GitHub
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center">
+                <p class="text-gray-400 text-sm">
+                    &copy; 2026 Rich Text to Markdown Converter. Open Source Project.
+                </p>
+                <p class="text-gray-500 text-xs mt-2">
+                    Made with <i class="fas fa-heart text-red-500"></i> for the developer community
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const editor = document.getElementById('richTextEditor');
+        const output = document.getElementById('markdownOutput');
+
+        // Format text commands
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            editor.focus();
+            convertToMarkdown();
+        }
+
+        // Format heading
+        function formatHeading(tag) {
+            if (tag) {
+                document.execCommand('formatBlock', false, tag);
+                convertToMarkdown();
+            }
+            // Reset the select
+            event.target.value = '';
+        }
+
+        // Insert link
+        function insertLink() {
+            const url = prompt('Enter URL:');
+            if (url) {
+                const selection = window.getSelection();
+                const text = selection.toString() || 'Link Text';
+                document.execCommand('createLink', false, url);
+                convertToMarkdown();
+            }
+            editor.focus();
+        }
+
+        // Insert image
+        function insertImage() {
+            const url = prompt('Enter image URL:');
+            if (url) {
+                const alt = prompt('Enter alt text (optional):') || 'image';
+                document.execCommand('insertImage', false, url);
+                convertToMarkdown();
+            }
+            editor.focus();
+        }
+
+        // Insert code block
+        function insertCodeBlock() {
+            const code = prompt('Enter code:');
+            if (code) {
+                const pre = document.createElement('pre');
+                const codeEl = document.createElement('code');
+                codeEl.textContent = code;
+                pre.appendChild(codeEl);
+                pre.style.backgroundColor = '#f3f4f6';
+                pre.style.padding = '12px';
+                pre.style.borderRadius = '6px';
+                pre.style.margin = '10px 0';
+
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    range.deleteContents();
+                    range.insertNode(pre);
+                }
+                convertToMarkdown();
+            }
+            editor.focus();
+        }
+
+        // Insert blockquote
+        function insertBlockquote() {
+            document.execCommand('formatBlock', false, 'blockquote');
+            convertToMarkdown();
+            editor.focus();
+        }
+
+        // Insert horizontal rule
+        function insertHorizontalRule() {
+            document.execCommand('insertHorizontalRule', false, null);
+            convertToMarkdown();
+            editor.focus();
+        }
+
+        // Convert HTML to Markdown
+        function convertToMarkdown() {
+            const html = editor.innerHTML;
+            let markdown = htmlToMarkdown(html);
+            output.textContent = markdown;
+        }
+
+        function htmlToMarkdown(html) {
+            // Create a temporary div to parse HTML
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+
+            let markdown = '';
+
+            function processNode(node, listLevel = 0) {
+                let result = '';
+
+                if (node.nodeType === Node.TEXT_NODE) {
+                    return node.textContent;
+                }
+
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const tag = node.tagName.toLowerCase();
+                    const children = Array.from(node.childNodes);
+                    const childText = children.map(child => processNode(child, listLevel)).join('');
+
+                    switch (tag) {
+                        case 'h1':
+                            result = `# ${childText}\n\n`;
+                            break;
+                        case 'h2':
+                            result = `## ${childText}\n\n`;
+                            break;
+                        case 'h3':
+                            result = `### ${childText}\n\n`;
+                            break;
+                        case 'h4':
+                            result = `#### ${childText}\n\n`;
+                            break;
+                        case 'h5':
+                            result = `##### ${childText}\n\n`;
+                            break;
+                        case 'h6':
+                            result = `###### ${childText}\n\n`;
+                            break;
+                        case 'p':
+                            result = `${childText}\n\n`;
+                            break;
+                        case 'strong':
+                        case 'b':
+                            result = `**${childText}**`;
+                            break;
+                        case 'em':
+                        case 'i':
+                            result = `*${childText}*`;
+                            break;
+                        case 'u':
+                            result = `<u>${childText}</u>`;
+                            break;
+                        case 'strike':
+                        case 's':
+                        case 'del':
+                            result = `~~${childText}~~`;
+                            break;
+                        case 'a':
+                            const href = node.getAttribute('href') || '';
+                            result = `[${childText}](${href})`;
+                            break;
+                        case 'img':
+                            const src = node.getAttribute('src') || '';
+                            const alt = node.getAttribute('alt') || 'image';
+                            result = `![${alt}](${src})\n\n`;
+                            break;
+                        case 'code':
+                            if (node.parentNode.tagName.toLowerCase() === 'pre') {
+                                result = childText;
+                            } else {
+                                result = `\`${childText}\``;
+                            }
+                            break;
+                        case 'pre':
+                            result = `\`\`\`\n${childText}\n\`\`\`\n\n`;
+                            break;
+                        case 'blockquote':
+                            const lines = childText.trim().split('\n');
+                            result = lines.map(line => `> ${line}`).join('\n') + '\n\n';
+                            break;
+                        case 'ul':
+                            children.forEach(child => {
+                                if (child.tagName && child.tagName.toLowerCase() === 'li') {
+                                    const indent = '  '.repeat(listLevel);
+                                    result += `${indent}- ${processNode(child, listLevel + 1).trim()}\n`;
+                                }
+                            });
+                            result += '\n';
+                            return result;
+                        case 'ol':
+                            let counter = 1;
+                            children.forEach(child => {
+                                if (child.tagName && child.tagName.toLowerCase() === 'li') {
+                                    const indent = '  '.repeat(listLevel);
+                                    result += `${indent}${counter}. ${processNode(child, listLevel + 1).trim()}\n`;
+                                    counter++;
+                                }
+                            });
+                            result += '\n';
+                            return result;
+                        case 'li':
+                            return childText;
+                        case 'hr':
+                            result = '---\n\n';
+                            break;
+                        case 'br':
+                            result = '\n';
+                            break;
+                        case 'div':
+                            result = `${childText}\n`;
+                            break;
+                        default:
+                            result = childText;
+                    }
+                }
+
+                return result;
+            }
+
+            markdown = processNode(temp);
+
+            // Clean up extra newlines
+            markdown = markdown.replace(/\n{3,}/g, '\n\n');
+            markdown = markdown.trim();
+
+            return markdown;
+        }
+
+        // Copy markdown to clipboard
+        function copyMarkdown() {
+            const text = output.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Copied to clipboard!', 'success');
+            }).catch(() => {
+                showNotification('Failed to copy', 'error');
+            });
+        }
+
+        // Download markdown file
+        function downloadMarkdown() {
+            const text = output.textContent;
+            if (!text.trim()) {
+                showNotification('Nothing to download', 'error');
+                return;
+            }
+            const blob = new Blob([text], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'converted-markdown.md';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showNotification('Downloaded successfully!', 'success');
+        }
+
+        // Clear editor
+        function clearEditor() {
+            if (confirm('Are you sure you want to clear the editor?')) {
+                editor.innerHTML = '';
+                output.textContent = '';
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+
+            notificationText.textContent = message;
+
+            if (type === 'error') {
+                notification.classList.remove('bg-green-500');
+                notification.classList.add('bg-red-500');
+            } else {
+                notification.classList.remove('bg-red-500');
+                notification.classList.add('bg-green-500');
+            }
+
+            notification.classList.remove('hidden');
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Listen for input changes
+        editor.addEventListener('input', convertToMarkdown);
+        editor.addEventListener('paste', (e) => {
+            setTimeout(convertToMarkdown, 10);
+        });
+
+        // Keyboard shortcuts
+        editor.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key.toLowerCase()) {
+                    case 'b':
+                        e.preventDefault();
+                        formatText('bold');
+                        break;
+                    case 'i':
+                        e.preventDefault();
+                        formatText('italic');
+                        break;
+                    case 'u':
+                        e.preventDefault();
+                        formatText('underline');
+                        break;
+                }
+            }
+        });
+
+        // Prevent default drag and drop behavior for images
+        editor.addEventListener('drop', (e) => {
+            setTimeout(convertToMarkdown, 10);
+        });
+
+        // Initial conversion
+        convertToMarkdown();
+    </script>
+</body>
+
+</html>
