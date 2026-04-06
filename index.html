@@ -33,7 +33,8 @@
     <meta property="twitter:title" content="Rich Text to Markdown Converter - Free Online Tool">
     <meta property="twitter:description"
         content="Instantly convert formatted text and HTML to clean Markdown syntax. Free, fast, and easy to use.">
-    <meta property="twitter:image" content="https://muhammad-waqas1.github.io/rich-text-markdown-converter/og-image.png">
+    <meta property="twitter:image"
+        content="https://muhammad-waqas1.github.io/rich-text-markdown-converter/og-image.png">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://muhammad-waqas1.github.io/rich-text-markdown-converter/">
@@ -212,6 +213,110 @@
 
         .hero-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Custom Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 0;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            background-color: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            border-radius: 0 0 12px 12px;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+            color: #6b7280;
+            transition: all 0.2s;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-button:hover {
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background-color: #f9fafb;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #667eea;
+            background-color: #eef2ff;
         }
     </style>
 </head>
@@ -614,6 +719,124 @@
         const editor = document.getElementById('richTextEditor');
         const output = document.getElementById('markdownOutput');
 
+        // Store the saved selection range
+        let savedRange = null;
+
+        // ============================================
+        // SELECTION PRESERVATION
+        // ============================================
+
+        function saveSelection() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                savedRange = selection.getRangeAt(0);
+            } else {
+                // If no selection, create one at the end of editor
+                const range = document.createRange();
+                range.selectNodeContents(editor);
+                range.collapse(false);
+                savedRange = range;
+            }
+        }
+
+        function restoreSelection() {
+            if (savedRange) {
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(savedRange);
+            }
+        }
+
+        function insertAtCursor(element) {
+            restoreSelection();
+            if (savedRange) {
+                savedRange.deleteContents();
+                savedRange.insertNode(element);
+
+                // Move cursor after inserted element
+                const range = document.createRange();
+                range.setStartAfter(element);
+                range.collapse(true);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                editor.appendChild(element);
+            }
+            convertToMarkdown();
+            editor.focus();
+        }
+
+        // ============================================
+        // CUSTOM MODAL SYSTEM
+        // ============================================
+
+        function createModal(title, content, buttons) {
+            // Remove any existing modals
+            const existingModal = document.querySelector('.modal-overlay');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+
+            const modal = document.createElement('div');
+            modal.className = 'modal-content';
+
+            modal.innerHTML = `
+                <div class="modal-header">
+                    <h3 class="text-lg font-semibold text-gray-900">${title}</h3>
+                </div>
+                <div class="modal-body">
+                    ${content}
+                </div>
+                <div class="modal-footer">
+                    ${buttons}
+                </div>
+            `;
+
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+
+            // Close on overlay click
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.remove();
+                }
+            });
+
+            // Close on Escape key
+            const escHandler = (e) => {
+                if (e.key === 'Escape') {
+                    overlay.remove();
+                    document.removeEventListener('keydown', escHandler);
+                }
+            };
+            document.addEventListener('keydown', escHandler);
+
+            return overlay;
+        }
+
+        function showConfirm(title, message, onConfirm) {
+            const content = `<p class="text-gray-700">${message}</p>`;
+            const buttons = `
+                <button onclick="this.closest('.modal-overlay').remove()" class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    Cancel
+                </button>
+                <button id="confirmBtn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                    Confirm
+                </button>
+            `;
+
+            const modal = createModal(title, content, buttons);
+
+            document.getElementById('confirmBtn').addEventListener('click', () => {
+                modal.remove();
+                onConfirm();
+            });
+        }
+
         // Format text commands
         function formatText(command) {
             document.execCommand(command, false, null);
@@ -631,51 +854,278 @@
             event.target.value = '';
         }
 
-        // Insert link
+        // Insert link with custom modal
         function insertLink() {
-            const url = prompt('Enter URL:');
-            if (url) {
-                const selection = window.getSelection();
-                const text = selection.toString() || 'Link Text';
-                document.execCommand('createLink', false, url);
-                convertToMarkdown();
-            }
-            editor.focus();
-        }
+            // Save current selection BEFORE opening modal
+            saveSelection();
 
-        // Insert image
-        function insertImage() {
-            const url = prompt('Enter image URL:');
-            if (url) {
-                const alt = prompt('Enter alt text (optional):') || 'image';
-                document.execCommand('insertImage', false, url);
-                convertToMarkdown();
-            }
-            editor.focus();
-        }
+            const selection = window.getSelection();
+            const selectedText = selection.toString() || '';
 
-        // Insert code block
-        function insertCodeBlock() {
-            const code = prompt('Enter code:');
-            if (code) {
-                const pre = document.createElement('pre');
-                const codeEl = document.createElement('code');
-                codeEl.textContent = code;
-                pre.appendChild(codeEl);
-                pre.style.backgroundColor = '#f3f4f6';
-                pre.style.padding = '12px';
-                pre.style.borderRadius = '6px';
-                pre.style.margin = '10px 0';
+            const content = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Link Text</label>
+                        <input type="text" id="linkText" value="${selectedText}" placeholder="Enter link text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">URL</label>
+                        <input type="url" id="linkUrl" placeholder="https://example.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    </div>
+                </div>
+            `;
 
-                const selection = window.getSelection();
-                if (selection.rangeCount > 0) {
-                    const range = selection.getRangeAt(0);
-                    range.deleteContents();
-                    range.insertNode(pre);
+            const buttons = `
+                <button onclick="this.closest('.modal-overlay').remove()" class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    Cancel
+                </button>
+                <button id="insertLinkBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Insert Link
+                </button>
+            `;
+
+            const modal = createModal('Insert Link', content, buttons);
+
+            // Focus on first input
+            setTimeout(() => {
+                const linkTextInput = document.getElementById('linkText');
+                linkTextInput.focus();
+                if (selectedText) {
+                    document.getElementById('linkUrl').focus();
                 }
-                convertToMarkdown();
-            }
-            editor.focus();
+            }, 100);
+
+            // Handle insert
+            document.getElementById('insertLinkBtn').addEventListener('click', () => {
+                const text = document.getElementById('linkText').value || 'Link';
+                const url = document.getElementById('linkUrl').value;
+
+                if (url) {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.textContent = text;
+
+                    insertAtCursor(a);
+                    modal.remove();
+                } else {
+                    document.getElementById('linkUrl').classList.add('border-red-500');
+                }
+            });
+
+            // Enter key to insert
+            document.getElementById('linkUrl').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('insertLinkBtn').click();
+                }
+            });
+        }
+
+        // Insert image with URL or upload
+        function insertImage() {
+            // Save current selection BEFORE opening modal
+            saveSelection();
+
+            const content = `
+                <div class="space-y-4">
+                    <div class="flex border-b border-gray-200">
+                        <button class="tab-button active" data-tab="url" onclick="switchTab('url')">
+                            <i class="fas fa-link mr-2"></i>From URL
+                        </button>
+                        <button class="tab-button" data-tab="upload" onclick="switchTab('upload')">
+                            <i class="fas fa-upload mr-2"></i>Upload Image
+                        </button>
+                    </div>
+                    
+                    <!-- URL Tab -->
+                    <div id="urlTab" class="tab-content active">
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                                <input type="url" id="imageUrl" placeholder="https://example.com/image.jpg" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Alt Text (optional)</label>
+                                <input type="text" id="imageAlt" placeholder="Describe the image" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Upload Tab -->
+                    <div id="uploadTab" class="tab-content">
+                        <input type="file" id="imageFile" accept="image/*" class="hidden">
+                        <div id="fileUploadArea" class="file-upload-area">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                            <p class="text-gray-700 font-medium mb-1">Click to upload or drag and drop</p>
+                            <p class="text-sm text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                        </div>
+                        <div id="imagePreview" class="mt-3 hidden">
+                            <img id="previewImg" class="max-w-full h-auto rounded-lg border border-gray-200">
+                            <input type="text" id="uploadImageAlt" placeholder="Alt text (optional)" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none mt-2">
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const buttons = `
+                <button onclick="this.closest('.modal-overlay').remove()" class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    Cancel
+                </button>
+                <button id="insertImageBtn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                    Insert Image
+                </button>
+            `;
+
+            const modal = createModal('Insert Image', content, buttons);
+
+            // Setup file upload
+            const fileInput = document.getElementById('imageFile');
+            const uploadArea = document.getElementById('fileUploadArea');
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            let uploadedImageData = null;
+
+            uploadArea.addEventListener('click', () => fileInput.click());
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        uploadedImageData = e.target.result;
+                        previewImg.src = uploadedImageData;
+                        uploadArea.classList.add('hidden');
+                        preview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        uploadedImageData = e.target.result;
+                        previewImg.src = uploadedImageData;
+                        uploadArea.classList.add('hidden');
+                        preview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Handle insert
+            document.getElementById('insertImageBtn').addEventListener('click', () => {
+                const activeTab = document.querySelector('.tab-button.active').dataset.tab;
+                let src, alt;
+
+                if (activeTab === 'url') {
+                    src = document.getElementById('imageUrl').value;
+                    alt = document.getElementById('imageAlt').value || 'image';
+                } else {
+                    src = uploadedImageData;
+                    alt = document.getElementById('uploadImageAlt').value || 'uploaded image';
+                }
+
+                if (src) {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    img.alt = alt;
+                    img.style.maxWidth = '100%';
+                    img.style.height = 'auto';
+                    img.style.margin = '10px 0';
+
+                    insertAtCursor(img);
+                    modal.remove();
+                } else {
+                    if (activeTab === 'url') {
+                        document.getElementById('imageUrl').classList.add('border-red-500');
+                    }
+                }
+            });
+
+            // Focus on URL input
+            setTimeout(() => document.getElementById('imageUrl').focus(), 100);
+        }
+
+        // Switch tabs in image modal
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            document.getElementById(`${tab}Tab`).classList.add('active');
+        }
+
+        // Insert code block with custom modal
+        function insertCodeBlock() {
+            // Save current selection BEFORE opening modal
+            saveSelection();
+
+            const content = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Language (optional)</label>
+                        <input type="text" id="codeLang" placeholder="e.g., javascript, python, html" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Code</label>
+                        <textarea id="codeContent" rows="8" placeholder="Enter your code here..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono text-sm"></textarea>
+                    </div>
+                </div>
+            `;
+
+            const buttons = `
+                <button onclick="this.closest('.modal-overlay').remove()" class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    Cancel
+                </button>
+                <button id="insertCodeBtn" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                    Insert Code
+                </button>
+            `;
+
+            const modal = createModal('Insert Code Block', content, buttons);
+
+            setTimeout(() => document.getElementById('codeContent').focus(), 100);
+
+            document.getElementById('insertCodeBtn').addEventListener('click', () => {
+                const code = document.getElementById('codeContent').value;
+                const lang = document.getElementById('codeLang').value;
+
+                if (code) {
+                    const pre = document.createElement('pre');
+                    const codeEl = document.createElement('code');
+                    if (lang) {
+                        codeEl.className = `language-${lang}`;
+                    }
+                    codeEl.textContent = code;
+                    pre.appendChild(codeEl);
+                    pre.style.backgroundColor = '#f3f4f6';
+                    pre.style.padding = '12px';
+                    pre.style.borderRadius = '6px';
+                    pre.style.margin = '10px 0';
+                    pre.style.overflow = 'auto';
+
+                    insertAtCursor(pre);
+                    modal.remove();
+                }
+            });
         }
 
         // Insert blockquote
@@ -763,7 +1213,12 @@
                         case 'img':
                             const src = node.getAttribute('src') || '';
                             const alt = node.getAttribute('alt') || 'image';
-                            result = `![${alt}](${src})\n\n`;
+                            // Handle base64 images
+                            if (src.startsWith('data:image')) {
+                                result = `![${alt}](${src})\n\n`;
+                            } else {
+                                result = `![${alt}](${src})\n\n`;
+                            }
                             break;
                         case 'code':
                             if (node.parentNode.tagName.toLowerCase() === 'pre') {
@@ -773,7 +1228,14 @@
                             }
                             break;
                         case 'pre':
-                            result = `\`\`\`\n${childText}\n\`\`\`\n\n`;
+                            const codeElement = node.querySelector('code');
+                            const langClass = codeElement ? codeElement.className : '';
+                            const lang = langClass.replace('language-', '');
+                            if (lang) {
+                                result = `\`\`\`${lang}\n${childText}\n\`\`\`\n\n`;
+                            } else {
+                                result = `\`\`\`\n${childText}\n\`\`\`\n\n`;
+                            }
                             break;
                         case 'blockquote':
                             const lines = childText.trim().split('\n');
@@ -856,12 +1318,17 @@
             showNotification('Downloaded successfully!', 'success');
         }
 
-        // Clear editor
+        // Clear editor with custom confirm
         function clearEditor() {
-            if (confirm('Are you sure you want to clear the editor?')) {
-                editor.innerHTML = '';
-                output.textContent = '';
-            }
+            showConfirm(
+                'Clear Editor',
+                'Are you sure you want to clear all content? This action cannot be undone.',
+                () => {
+                    editor.innerHTML = '';
+                    output.textContent = '';
+                    showNotification('Content cleared', 'success');
+                }
+            );
         }
 
         // Show notification

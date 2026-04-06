@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-04-06
+
+### Added
+- ✨ **Custom Modal System** - Replaced default browser alerts with beautiful, professional modals
+- 🖼️ **Image Upload Feature** - Users can now upload images from their local computer in addition to using URLs
+- 🎨 **Tabbed Image Insert** - Switch between "From URL" and "Upload Image" tabs
+- 📤 **Drag & Drop Support** - Drag and drop images directly into the upload area
+- 🖼️ **Image Preview** - Preview uploaded images before inserting
+- 💬 **Professional Dialogs** - All prompts (link, image, code) now use custom modals with better UX
+- ⌨️ **Keyboard Support** - Press Enter to confirm in modals, Escape to close
+- 🎯 **Better Validation** - Visual feedback for required fields
+- 📝 **Language Support in Code Blocks** - Optional language specification for syntax highlighting
+
+### Changed
+- 🔄 Improved modal animations with smooth slide-up effects
+- 🎨 Enhanced visual design for all input dialogs
+- 💾 Base64 image support in markdown output
+- ✨ Better user feedback with backdrop blur on modals
+
+### Improved
+- 📱 Better mobile experience for modal interactions
+- 🎭 More professional and polished UI/UX
+- 🔒 Click outside modal or press Escape to close
+- 💡 Clearer labels and placeholders in all forms
+
+### Technical
+- Implemented reusable `createModal()` function
+- Added tab switching system for multi-option inputs
+- File reader API integration for image uploads
+- Enhanced markdown conversion to handle base64 images
+- Improved code block detection with language classes
+
 ## [1.0.0] - 2026-01-30
 
 ### Added
@@ -64,15 +96,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [ ] Table support for Markdown tables
 - [ ] Dark mode toggle
 - [ ] Additional keyboard shortcuts
-- [ ] Syntax highlighting for code blocks
+- [ ] Syntax highlighting for code blocks in preview
 - [ ] Export to PDF/HTML
 - [ ] Markdown to Rich Text (reverse conversion)
 - [ ] Internationalization (i18n)
 - [ ] Undo/Redo functionality
 - [ ] Save/Load drafts from localStorage
 - [ ] More formatting options (superscript, subscript, etc.)
-- [ ] Drag and drop file upload
-- [ ] Image upload and embedding
 - [ ] Live preview mode
 - [ ] Split screen adjustment
 - [ ] Custom themes
@@ -112,4 +142,5 @@ When contributing, please update this file with your changes in the [Unreleased]
 
 ---
 
-[1.0.0]: https://github.com/muhammad-waqas1/rich-text-markdown-converter/releases/tag/v1.0.0
+[1.1.0]: https://github.com/yourusername/rich-text-markdown-converter/releases/tag/v1.1.0
+[1.0.0]: https://github.com/yourusername/rich-text-markdown-converter/releases/tag/v1.0.0
