@@ -89,21 +89,6 @@ Since this is a static site with no dependencies, you can deploy it anywhere:
 - **AWS S3** + CloudFront
 - Any static hosting service
 
-## 📁 Project Structure
-
-```
-rich-text-markdown-converter/
-├── index.html              # Main application file
-├── README.md              # This file
-├── LICENSE               # MIT License
-├── favicon-16x16.png     # Favicon 16x16
-├── favicon-32x32.png     # Favicon 32x32
-├── apple-touch-icon.png  # Apple touch icon
-├── robots.txt            # SEO robots file
-├── sitemap.xml           # SEO sitemap
-└── manifest.json         # PWA manifest
-```
-
 ## 🔧 Technical Details
 
 ### Built With
@@ -187,6 +172,6 @@ For questions, suggestions, or issues, please [open an issue](https://github.com
 
 ---
 
-**Made with ❤️ by [Your Name](https://github.com/muhammad-waqas1)**
+**Made with ❤️ by [WAQAS](https://github.com/muhammad-waqas1)**
 
 [⬆ Back to Top](#-rich-text-to-markdown-converter)
